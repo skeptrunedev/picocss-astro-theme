@@ -9,6 +9,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.6.1"
+    "@astrojs/markdoc": "^0.14.0",
+    "@astrojs/sitemap": "^3.3.0",
+    "@tailwindcss/vite": "^4.1.4",
+    "astro": "^5.6.1",
+    "astro-icon": "^1.1.5",
+    "tailwindcss": "^4.1.4"
+  },
+  "devDependencies": {
+    "@iconify-json/bi": "^1.2.2",
+    "@iconify-json/simple-icons": "^1.2.32"
   }
 }
