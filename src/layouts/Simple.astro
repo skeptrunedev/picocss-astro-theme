@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import { Icon } from "astro-icon/components";
 import { SocialLinks } from "theme.config";
 
@@ -25,7 +26,7 @@ const currentPath = Astro.url.pathname;
           <li><a href="/posts">Posts</a></li>
         </ul>
         <ul>
-          <li>
+          <li transition:persist>
             <a
               id="theme-toggle-dark"
               aria-label="Toggle theme"
@@ -75,45 +76,52 @@ const currentPath = Astro.url.pathname;
   </body>
 </html>
 
-<script>
-  const darkToggle = document.getElementById("theme-toggle-dark");
-  const lightToggle = document.getElementById("theme-toggle-light");
+<ClientRouter />
 
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    lightToggle?.classList.add("hidden!");
-    darkToggle?.classList.remove("hidden!");
-    document.documentElement.setAttribute("data-theme", "dark");
-  } else if (savedTheme === "light") {
-    darkToggle?.classList.add("hidden!");
-    lightToggle?.classList.remove("hidden!");
-    document.documentElement.setAttribute("data-theme", "light");
-  } else {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    if (prefersDark) {
+<script>
+  const handleThemeToggle = () => {
+    const darkToggle = document.getElementById("theme-toggle-dark");
+    const lightToggle = document.getElementById("theme-toggle-light");
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      lightToggle?.classList.add("hidden!");
       darkToggle?.classList.remove("hidden!");
       document.documentElement.setAttribute("data-theme", "dark");
-    } else {
+    } else if (savedTheme === "light") {
+      darkToggle?.classList.add("hidden!");
       lightToggle?.classList.remove("hidden!");
       document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      if (prefersDark) {
+        darkToggle?.classList.remove("hidden!");
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        lightToggle?.classList.remove("hidden!");
+        document.documentElement.setAttribute("data-theme", "light");
+      }
     }
-  }
 
-  lightToggle?.addEventListener("click", (e) => {
-    e.preventDefault();
-    lightToggle?.classList.add("hidden!");
-    darkToggle?.classList.remove("hidden!");
-    document.documentElement.setAttribute("data-theme", "dark");
-    localStorage.setItem("theme", "dark");
-  });
+    lightToggle?.addEventListener("click", (e) => {
+      e.preventDefault();
+      lightToggle?.classList.add("hidden!");
+      darkToggle?.classList.remove("hidden!");
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+    });
 
-  darkToggle?.addEventListener("click", (e) => {
-    e.preventDefault();
-    darkToggle?.classList.add("hidden!");
-    lightToggle?.classList.remove("hidden!");
-    document.documentElement.setAttribute("data-theme", "light");
-    localStorage.setItem("theme", "light");
-  });
+    darkToggle?.addEventListener("click", (e) => {
+      e.preventDefault();
+      darkToggle?.classList.add("hidden!");
+      lightToggle?.classList.remove("hidden!");
+      document.documentElement.setAttribute("data-theme", "light");
+      localStorage.setItem("theme", "light");
+    });
+  };
+  document.addEventListener("DOMContentLoaded", handleThemeToggle);
+  document.addEventListener("astro:after-swap", () => handleThemeToggle());
+  document.addEventListener("astro:page-load", () => handleThemeToggle());
 </script>
