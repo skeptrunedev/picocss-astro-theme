@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { Icon } from "astro-icon/components";
 import { SocialLinks } from "theme.config";
 
+const { title } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -10,6 +11,7 @@ const currentPath = Astro.url.pathname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.slate.min.css"
@@ -20,7 +22,7 @@ const currentPath = Astro.url.pathname;
       <nav>
         <ul>
           <li><a href="/">About</a></li>
-          <li><a href="#">Posts</a></li>
+          <li><a href="/posts">Posts</a></li>
         </ul>
         <ul>
           <li>
@@ -47,12 +49,10 @@ const currentPath = Astro.url.pathname;
       </nav>
     </header>
     <main>
-      <article>
-        <slot />
-      </article>
+      <slot />
     </main>
     <footer>
-      <nav>
+      <nav class="border-t">
         <ul>
           {
             SocialLinks.map((link) => (
@@ -76,46 +76,44 @@ const currentPath = Astro.url.pathname;
 </html>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const darkToggle = document.getElementById("theme-toggle-dark");
-    const lightToggle = document.getElementById("theme-toggle-light");
+  const darkToggle = document.getElementById("theme-toggle-dark");
+  const lightToggle = document.getElementById("theme-toggle-light");
 
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      lightToggle?.classList.add("hidden!");
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    lightToggle?.classList.add("hidden!");
+    darkToggle?.classList.remove("hidden!");
+    document.documentElement.setAttribute("data-theme", "dark");
+  } else if (savedTheme === "light") {
+    darkToggle?.classList.add("hidden!");
+    lightToggle?.classList.remove("hidden!");
+    document.documentElement.setAttribute("data-theme", "light");
+  } else {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    if (prefersDark) {
       darkToggle?.classList.remove("hidden!");
       document.documentElement.setAttribute("data-theme", "dark");
-    } else if (savedTheme === "light") {
-      darkToggle?.classList.add("hidden!");
-      lightToggle?.classList.remove("hidden!");
-      document.documentElement.setAttribute("data-theme", "light");
     } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      if (prefersDark) {
-        darkToggle?.classList.remove("hidden!");
-        document.documentElement.setAttribute("data-theme", "dark");
-      } else {
-        lightToggle?.classList.remove("hidden!");
-        document.documentElement.setAttribute("data-theme", "light");
-      }
-    }
-
-    lightToggle?.addEventListener("click", (e) => {
-      e.preventDefault();
-      lightToggle?.classList.add("hidden!");
-      darkToggle?.classList.remove("hidden!");
-      document.documentElement.setAttribute("data-theme", "dark");
-      localStorage.setItem("theme", "dark");
-    });
-
-    darkToggle?.addEventListener("click", (e) => {
-      e.preventDefault();
-      darkToggle?.classList.add("hidden!");
       lightToggle?.classList.remove("hidden!");
       document.documentElement.setAttribute("data-theme", "light");
-      localStorage.setItem("theme", "light");
-    });
+    }
+  }
+
+  lightToggle?.addEventListener("click", (e) => {
+    e.preventDefault();
+    lightToggle?.classList.add("hidden!");
+    darkToggle?.classList.remove("hidden!");
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  });
+
+  darkToggle?.addEventListener("click", (e) => {
+    e.preventDefault();
+    darkToggle?.classList.add("hidden!");
+    lightToggle?.classList.remove("hidden!");
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
   });
 </script>

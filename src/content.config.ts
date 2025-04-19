@@ -3,17 +3,19 @@ import { defineCollection, z } from "astro:content";
 
 const blogPosts = defineCollection({
   loader: glob({
-    pattern: "**/*.mdoc",
+    pattern: "**/*.mdx",
     base: "./src/content/blog-posts",
   }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      slug: z.string(),
       summary: z.string(),
       author: z.string().optional(),
       categories: z.array(z.string()),
       coverImage: image().optional(),
-      isDraft: z.boolean(),
+      isFeatured: z.boolean().optional(),
+      isDraft: z.boolean().optional(),
       createdAt: z.date(),
       updatedAt: z.date(),
     }),

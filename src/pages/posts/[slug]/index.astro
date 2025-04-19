@@ -1,0 +1,26 @@
+---
+import SimpleLayout from "@layouts/Simple.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("blogPosts");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const categories = await getCollection("blogCategories");
+
+const { entry } = Astro.props;
+
+const { Content, headings } = await render(entry);
+
+const i18n = entry.data;
+---
+
+<SimpleLayout title=`${i18n.title} | Category | Trieve`>
+  <article>
+    <Content />
+  </article>
+</SimpleLayout>

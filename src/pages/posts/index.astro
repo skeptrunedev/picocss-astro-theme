@@ -1,0 +1,42 @@
+---
+import BlogPostCard from "@components/BlogPostCard.astro";
+import SimpleLayout from "@layouts/Simple.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("blogPosts").then((posts) =>
+  posts
+    .filter((e) => !e.data.isDraft)
+    .toSorted(
+      (a, b) =>
+        (b.data.createdAt?.getTime() ?? 0) - (a.data.createdAt?.getTime() ?? 0)
+    )
+);
+
+const postsByYear = allPosts.reduce(
+  (acc, post) => {
+    const year = post.data.createdAt?.getFullYear().toString() ?? "Unknown";
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(post);
+    return acc;
+  },
+  {} as Record<string, typeof allPosts>
+);
+---
+
+<SimpleLayout title="Posts | Trieve">
+  <h1>Posts</h1>
+  {
+    Object.entries(postsByYear).map(([year, posts]) => (
+      <section>
+        <p class="chapter">{year}</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2! md:grid-cols-3! gap-4">
+          {posts.map((post) => (
+            <BlogPostCard post={post} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</SimpleLayout>

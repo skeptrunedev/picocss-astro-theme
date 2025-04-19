@@ -6,6 +6,8 @@ import sitemap from "@astrojs/sitemap";
 
 import icon from "astro-icon";
 
+import mdx from "@astrojs/mdx";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://trieve.ai",
@@ -15,7 +17,7 @@ export default defineConfig({
   image: {
     domains: ["127.0.0.1"],
   },
-  integrations: [markdoc(), sitemap(), icon()],
+  integrations: [markdoc(), sitemap(), icon(), mdx()],
   vite: {
     resolve: {
       alias: {
