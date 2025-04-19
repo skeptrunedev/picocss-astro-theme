@@ -4,11 +4,10 @@ import { getCollection } from "astro:content";
 
 interface Props {
   post: Awaited<ReturnType<typeof getCollection<"blogPosts">>>[number];
+  catFreqs: Record<string, number>;
 }
 
-const categories = await getCollection("blogCategories");
-
-const { post } = Astro.props;
+const { post, catFreqs } = Astro.props;
 ---
 
 <article>
@@ -31,9 +30,13 @@ const { post } = Astro.props;
   <div class="flex flex-row gap-2 mt-2">
     {
       post.data.categories.map((cat) => (
-        <a href={`/posts/${cat}`}>
-          <small>{cat}</small>
-        </a>
+        <small>
+          <code>
+            <a href={`/posts/${cat}`}>
+              {cat} ({catFreqs[cat]})
+            </a>
+          </code>{" "}
+        </small>
       ))
     }
   </div>

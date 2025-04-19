@@ -5,25 +5,39 @@ import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
   const categories = await getCollection("blogCategories");
-  const posts = await getCollection("blogPosts");
+  const allPosts = await getCollection("blogPosts");
+
+  const catFreqs = allPosts.reduce(
+    (acc, post) => {
+      post.data.categories.forEach((cat) => {
+        if (!acc[cat]) {
+          acc[cat] = 0;
+        }
+        acc[cat]++;
+      });
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return categories.map(({ id, data: category }) => ({
     params: { category: id },
     props: {
       category,
-      entries: posts.filter((p) => p.data.categories.includes(id)),
+      catFreqs,
+      entries: allPosts.filter((p) => p.data.categories.includes(id)),
     },
   }));
 }
 
-const { entries, category } = Astro.props;
+const { entries, category, catFreqs } = Astro.props;
 ---
 
 <SimpleLayout title=`${category.name} | Blog | Trieve`>
   <section>
-    <h1>Category: {category.name}</h1>
+    <h1>Category: <code>{category.name}</code></h1>
     <div class="grid grid-cols-1 sm:grid-cols-2! md:grid-cols-3! gap-4">
-      {entries.map(async (e) => <BlogPostCard post={e} />)}
+      {entries.map(async (e) => <BlogPostCard post={e} catFreqs={catFreqs} />)}
     </div>
   </section>
 </SimpleLayout>

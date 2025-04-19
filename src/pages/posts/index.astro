@@ -12,6 +12,19 @@ const allPosts = await getCollection("blogPosts").then((posts) =>
     )
 );
 
+const catFreqs = allPosts.reduce(
+  (acc, post) => {
+    post.data.categories.forEach((cat) => {
+      if (!acc[cat]) {
+        acc[cat] = 0;
+      }
+      acc[cat]++;
+    });
+    return acc;
+  },
+  {} as Record<string, number>
+);
+
 const postsByYear = allPosts.reduce(
   (acc, post) => {
     const year = post.data.createdAt?.getFullYear().toString() ?? "Unknown";
@@ -33,7 +46,7 @@ const postsByYear = allPosts.reduce(
         <p class="chapter">{year}</p>
         <div class="grid grid-cols-1 sm:grid-cols-2! md:grid-cols-3! gap-4">
           {posts.map((post) => (
-            <BlogPostCard post={post} />
+            <BlogPostCard post={post} catFreqs={catFreqs} />
           ))}
         </div>
       </section>
