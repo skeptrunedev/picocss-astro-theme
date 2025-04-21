@@ -1,5 +1,6 @@
 {
-  "name": "",
+  "name": "picocss-astro-template",
+  "description": "A minimal Astro template using PicoCSS and Tailwind CSS.",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
