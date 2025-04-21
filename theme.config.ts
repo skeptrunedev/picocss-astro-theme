@@ -9,3 +9,7 @@ export const SocialLinks = [
   { icon: "simple-icons:discord", href: "https://discord.gg/E9sPRZqpDT" },
   { icon: "simple-icons:rss", href: "/rss.xml" },
 ];
+
+export const SiteName = "Pixelbook Blog";
+
+export const SiteUrl = "https://pixelbook.dev";
