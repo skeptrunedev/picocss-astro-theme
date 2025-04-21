@@ -10,6 +10,8 @@ import { SiteUrl } from "./src/theme.config";
 // https://astro.build/config
 export default defineConfig({
   site: SiteUrl,
+  base: "/",
+  output: "static",
   devToolbar: {
     enabled: false,
   },
