@@ -69,7 +69,7 @@ Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page
 
 Any static assets, like images, can be placed in the `public/` directory.
 
-All blog posts are stored in `src/content/blog-posts` directory. All content tags go in the `src/content/blog-categories` directory.
+All blog posts are stored in `src/content/blog-posts`. All content tags go in the `src/content/blog-categories`.
 
 ## 💻 Tech Stack
 
