@@ -1,26 +1,97 @@
 ---
 import SimpleLayout from "@layouts/Simple.astro";
+import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("blogPosts");
-  return entries.map((entry) => ({
+  const allPosts = await getCollection("blogPosts");
+  const catFreqs = allPosts.reduce(
+    (acc, post) => {
+      post.data.categories.forEach((cat) => {
+        if (!acc[cat]) {
+          acc[cat] = 0;
+        }
+        acc[cat]++;
+      });
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+  return allPosts.map((entry) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: { entry, catFreqs },
   }));
 }
 
-const categories = await getCollection("blogCategories");
+const { entry, catFreqs } = Astro.props;
 
-const { entry } = Astro.props;
-
-const { Content, headings } = await render(entry);
+const { Content } = await render(entry);
 
 const i18n = entry.data;
 ---
 
-<SimpleLayout title=`${i18n.title} | Category | Trieve`>
+<SimpleLayout
+  title=`${i18n.title} | Category | Trieve`
+  type="article"
+  imageUrl={i18n.coverImage}
+  description={i18n.summary}
+  publishedTime={i18n.createdAt?.toISOString()}
+  modifiedTime={i18n.updatedAt?.toISOString()}
+  author={i18n.author}
+  primaryCategory={i18n.categories[0]}
+>
   <article>
+    <small class="flex flex-row items-center gap-2 mb-1!">
+      {
+        new Date(i18n.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
+      {
+        i18n.updatedAt.getDate() !== i18n.createdAt.getDate() && (
+          <>
+            {" "}
+            (Updated:{" "}
+            {new Date(i18n.updatedAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+            )
+          </>
+        )
+      }, {i18n.author}
+    </small>
+    <h1 class="my-5!">{i18n.title}</h1>
+    <h6 class="mt-0! font-normal!">
+      {i18n.summary}
+    </h6>
+    <div class="flex flex-col space-y-2 mb-8 sm:mb-10 md:mb-12">
+      <div class="flex flex-row flex-wrap gap-2 mt-2">
+        {
+          i18n.categories.map((cat) => (
+            <small>
+              <code>
+                <a href={`/posts/${cat}`}>
+                  {cat} ({catFreqs[cat]})
+                </a>
+              </code>{" "}
+            </small>
+          ))
+        }
+      </div>
+      {
+        i18n.coverImage && (
+          <Image
+            src={i18n.coverImage}
+            alt="Cover image"
+            class="rounded-sm w-3/4 mx-auto"
+          />
+        )
+      }
+    </div>
     <Content />
   </article>
 </SimpleLayout>

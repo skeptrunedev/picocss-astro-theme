@@ -27,7 +27,7 @@ const { post, catFreqs } = Astro.props;
     </p>
     <small>{post.data.summary}</small>
   </a>
-  <div class="flex flex-row gap-2 mt-2">
+  <div class="flex flex-row flex-wrap gap-2 mt-2">
     {
       post.data.categories.map((cat) => (
         <small>
